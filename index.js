@@ -10,6 +10,28 @@ require("dotenv").config();
 
 app.use(cors());
 app.use(express.json());
+const verifyJwt = (req, res, next)=> {
+const authorization = req.headers.authorization ;
+if(!authorization){
+  res.status(401).send({error: true, message: 'unauthorize access'})
+}
+const token = authorization.split(' ')[1];
+jwt.verify(token, process.env.ACCESS_TOKEN, (error, decoded)=>{
+  if(error){
+    res.status(403).send({error: true, message: 'unauthorized access'})
+  }
+   req.decoded =decoded ;
+   next()
+})
+
+
+}
+
+
+
+
+
+
 
 const uri = `mongodb+srv://${process.env.S3_BUCKET}:${process.env.SECRET_KEY}@cluster0.qhvkztn.mongodb.net/?retryWrites=true&w=majority`;
 
@@ -47,6 +69,7 @@ async function run() {
   const token = jwt.sign(user, process.env.ACCESS_TOKEN, {expiresIn: '1h'})
   res.send({token})
  })
+
 
 
 
