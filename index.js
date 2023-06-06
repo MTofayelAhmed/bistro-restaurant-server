@@ -84,6 +84,16 @@ async function run() {
       res.send(result);
     });
 
+
+
+
+    app.delete('/menu/:id', verifyJwt, verifyAdmin,  async(req, res)=> {
+      const id = req.params.id;
+      const query= {_id: new ObjectId(id)}
+      const result = await menuCollection.deleteOne(query)
+      res.send(result)
+    } )
+
     // user Collection apis
     app.get("/users", verifyJwt, async (req, res) => {
       const result = await userCollection.find().toArray();
@@ -141,7 +151,7 @@ async function run() {
 
     // cart collection Apis
 
-    app.get("/carts", verifyJwt, async (req, res) => {
+    app.get("/carts", verifyJwt,  async (req, res) => {
       const email = req.query.email;
       if (!email) {
         res.send([]);
